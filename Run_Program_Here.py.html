@@ -1,0 +1,213 @@
+<html>
+<head>
+<title>Run_Program_Here.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cf8e6d;}
+.s1 { color: #bcbec4;}
+.s2 { color: #bcbec4;}
+.s3 { color: #7a7e85;}
+.s4 { color: #6aab73;}
+.s5 { color: #2aacb8;}
+</style>
+</head>
+<body bgcolor="#1e1f22">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+Run_Program_Here.py</font>
+</center></td></tr></table>
+<pre><span class="s0">import </span><span class="s1">tkinter </span><span class="s0">as </span><span class="s1">tk</span>
+<span class="s0">import </span><span class="s1">os</span>
+<span class="s0">import </span><span class="s1">wavtools</span>
+<span class="s0">import </span><span class="s1">graph</span>
+<span class="s0">import </span><span class="s1">numpy </span><span class="s0">as </span><span class="s1">np</span>
+<span class="s0">import </span><span class="s1">matplotlib</span><span class="s2">.</span><span class="s1">pyplot </span><span class="s0">as </span><span class="s1">plt</span>
+
+<span class="s0">from </span><span class="s1">tkinter </span><span class="s0">import </span><span class="s1">ttk</span>
+<span class="s0">from </span><span class="s1">tkinter</span><span class="s2">.</span><span class="s1">filedialog </span><span class="s0">import </span><span class="s1">askopenfile</span>
+<span class="s0">from </span><span class="s1">pydub </span><span class="s0">import </span><span class="s1">AudioSegment</span>
+<span class="s0">from </span><span class="s1">wavtools </span><span class="s0">import </span><span class="s1">checkType</span>
+<span class="s0">from </span><span class="s1">wavtools </span><span class="s0">import </span><span class="s1">checkStereo</span>
+<span class="s0">from </span><span class="s1">wavtools </span><span class="s0">import </span><span class="s1">checkMetaData</span>
+<span class="s0">from </span><span class="s1">wavtools </span><span class="s0">import </span><span class="s1">makeWavArray</span>
+<span class="s0">from </span><span class="s1">graph </span><span class="s0">import </span><span class="s1">plotSpectogram</span>
+<span class="s0">from </span><span class="s1">graph </span><span class="s0">import </span><span class="s1">plotWaveform</span>
+<span class="s0">from </span><span class="s1">graph </span><span class="s0">import </span><span class="s1">plotrt60</span>
+<span class="s0">from </span><span class="s1">scipy</span><span class="s2">.</span><span class="s1">io </span><span class="s0">import </span><span class="s1">wavfile</span>
+
+<span class="s3">#basis for file selection</span>
+<span class="s3">#file path must be global for use in other funcs</span>
+<span class="s1">file_path </span><span class="s2">= </span><span class="s0">None</span>
+<span class="s0">def </span><span class="s1">getFile</span><span class="s2">():</span>
+    <span class="s1">file </span><span class="s2">= </span><span class="s1">askopenfile</span><span class="s2">(</span><span class="s1">mode</span><span class="s2">=</span><span class="s4">'r'</span><span class="s2">)</span>
+    <span class="s0">if </span><span class="s1">file</span><span class="s2">:</span>
+        <span class="s0">global </span><span class="s1">file_path</span>
+        <span class="s1">file_path </span><span class="s2">= </span><span class="s1">file</span><span class="s2">.</span><span class="s1">name</span>
+        <span class="s1">file_name </span><span class="s2">= </span><span class="s1">os</span><span class="s2">.</span><span class="s1">path</span><span class="s2">.</span><span class="s1">basename</span><span class="s2">(</span><span class="s1">file_path</span><span class="s2">)</span>
+        <span class="s1">fileDisplay</span><span class="s2">.</span><span class="s1">insert</span><span class="s2">(</span><span class="s1">tk</span><span class="s2">.</span><span class="s1">END</span><span class="s2">, </span><span class="s1">file_name</span><span class="s2">)</span>
+        <span class="s1">checkType</span><span class="s2">(</span><span class="s1">file_path</span><span class="s2">)</span>
+        <span class="s1">checkStereo</span><span class="s2">(</span><span class="s1">file_path</span><span class="s2">)</span>
+        <span class="s1">length </span><span class="s2">= </span><span class="s1">checkMetaData</span><span class="s2">(</span><span class="s1">file_path</span><span class="s2">)</span>
+        <span class="s1">lengthSec </span><span class="s2">= </span><span class="s1">length </span><span class="s2">/ </span><span class="s5">1000</span>
+
+        <span class="s1">fileDisplay</span><span class="s2">.</span><span class="s1">insert</span><span class="s2">(</span><span class="s1">tk</span><span class="s2">.</span><span class="s1">END</span><span class="s2">, </span><span class="s4">f&quot;File length: </span><span class="s0">{</span><span class="s1">lengthSec</span><span class="s0">} </span><span class="s4">seconds&quot;</span><span class="s2">)</span>
+
+        <span class="s1">wavArray </span><span class="s2">= </span><span class="s1">makeWavArray</span><span class="s2">(</span><span class="s1">file_path</span><span class="s2">)</span>
+        <span class="s1">plotWaveform</span><span class="s2">(</span><span class="s1">length</span><span class="s2">, </span><span class="s1">wavArray</span><span class="s2">)</span>
+
+        <span class="s1">rt1</span><span class="s2">, </span><span class="s1">max1</span><span class="s2">, </span><span class="s1">test1 </span><span class="s2">= </span><span class="s1">plotrt60</span><span class="s2">(</span><span class="s1">file_path</span><span class="s2">, </span><span class="s5">250</span><span class="s2">, </span><span class="s4">&quot;Low Frequency&quot;</span><span class="s2">)</span>
+        <span class="s1">rt2</span><span class="s2">, </span><span class="s1">max2</span><span class="s2">, </span><span class="s1">test2 </span><span class="s2">= </span><span class="s1">plotrt60</span><span class="s2">(</span><span class="s1">file_path</span><span class="s2">, </span><span class="s5">1000</span><span class="s2">, </span><span class="s4">&quot;Mid Frequency&quot;</span><span class="s2">)</span>
+        <span class="s1">rt3</span><span class="s2">, </span><span class="s1">max3</span><span class="s2">, </span><span class="s1">test3 </span><span class="s2">= </span><span class="s1">plotrt60</span><span class="s2">(</span><span class="s1">file_path</span><span class="s2">, </span><span class="s5">10000</span><span class="s2">, </span><span class="s4">&quot;High Frequency&quot;</span><span class="s2">)</span>
+
+        <span class="s1">rt1 </span><span class="s2">= </span><span class="s1">abs</span><span class="s2">(</span><span class="s1">rt1</span><span class="s2">)</span>
+        <span class="s1">rt2 </span><span class="s2">= </span><span class="s1">abs</span><span class="s2">(</span><span class="s1">rt2</span><span class="s2">)</span>
+        <span class="s1">rt3 </span><span class="s2">= </span><span class="s1">abs</span><span class="s2">(</span><span class="s1">rt3</span><span class="s2">)</span>
+        <span class="s1">rtdif </span><span class="s2">= (</span><span class="s1">rt1 </span><span class="s2">+ </span><span class="s1">rt2 </span><span class="s2">+ </span><span class="s1">rt3</span><span class="s2">) / </span><span class="s5">3</span>
+        <span class="s1">rtdif </span><span class="s2">-= </span><span class="s5">0.5</span>
+        <span class="s1">fileDisplay</span><span class="s2">.</span><span class="s1">insert</span><span class="s2">(</span><span class="s1">tk</span><span class="s2">.</span><span class="s1">END</span><span class="s2">, </span><span class="s4">f&quot;RT60 Difference: </span><span class="s0">{</span><span class="s1">rtdif</span><span class="s0">:</span><span class="s4">.3f</span><span class="s0">} </span><span class="s4">seconds&quot;</span><span class="s2">)</span>
+        <span class="s1">fileDisplay</span><span class="s2">.</span><span class="s1">insert</span><span class="s2">(</span><span class="s1">tk</span><span class="s2">.</span><span class="s1">END</span><span class="s2">, </span><span class="s4">f&quot;Low Frequency RT60: </span><span class="s0">{</span><span class="s1">rt1</span><span class="s0">:</span><span class="s4">.3f</span><span class="s0">} </span><span class="s4">seconds&quot;</span><span class="s2">)</span>
+        <span class="s1">fileDisplay</span><span class="s2">.</span><span class="s1">insert</span><span class="s2">(</span><span class="s1">tk</span><span class="s2">.</span><span class="s1">END</span><span class="s2">, </span><span class="s4">f&quot;Maximum Frequency: </span><span class="s0">{</span><span class="s1">max</span><span class="s2">(</span><span class="s1">max1</span><span class="s2">, </span><span class="s1">max2</span><span class="s2">, </span><span class="s1">max3</span><span class="s2">)</span><span class="s0">:</span><span class="s4">.3f</span><span class="s0">} </span><span class="s4">kHz&quot;</span><span class="s2">)</span>
+        <span class="s1">fileDisplay</span><span class="s2">.</span><span class="s1">insert</span><span class="s2">(</span><span class="s1">tk</span><span class="s2">.</span><span class="s1">END</span><span class="s2">, </span><span class="s4">f&quot;High Frequency RT60: </span><span class="s0">{</span><span class="s1">rt3</span><span class="s0">:</span><span class="s4">.3f</span><span class="s0">} </span><span class="s4">seconds&quot;</span><span class="s2">)</span>
+        <span class="s1">fileDisplay</span><span class="s2">.</span><span class="s1">insert</span><span class="s2">(</span><span class="s1">tk</span><span class="s2">.</span><span class="s1">END</span><span class="s2">, </span><span class="s4">f&quot;Mid Frequency RT60: </span><span class="s0">{</span><span class="s1">rt2</span><span class="s0">:</span><span class="s4">.3f</span><span class="s0">} </span><span class="s4">seconds&quot;</span><span class="s2">)</span>
+
+        <span class="s1">sample_rate</span><span class="s2">, </span><span class="s1">data </span><span class="s2">= </span><span class="s1">wavfile</span><span class="s2">.</span><span class="s1">read</span><span class="s2">(</span><span class="s1">file_path</span><span class="s2">)</span>
+        <span class="s1">frequencies</span><span class="s2">, </span><span class="s1">spectrum </span><span class="s2">= </span><span class="s1">compute_frequency_spectrum</span><span class="s2">(</span><span class="s1">data</span><span class="s2">, </span><span class="s1">sample_rate</span><span class="s2">)</span>
+
+        <span class="s3"># Plot the frequency spectrum</span>
+        <span class="s1">plot_frequency_spectrum</span><span class="s2">(</span><span class="s1">frequencies</span><span class="s2">, </span><span class="s1">spectrum</span><span class="s2">)</span>
+        <span class="s3">#plot phase diagram</span>
+        <span class="s1">plotPhase</span><span class="s2">(</span><span class="s1">file_path</span><span class="s2">)</span>
+
+        <span class="s1">file</span><span class="s2">.</span><span class="s1">close</span><span class="s2">()</span>
+        <span class="s3">#opens up file details page in gui</span>
+        <span class="s1">showFileDetailsPage</span><span class="s2">()</span>
+
+<span class="s0">def </span><span class="s1">plotPhase</span><span class="s2">(</span><span class="s1">file_path</span><span class="s2">):</span>
+    <span class="s0">try</span><span class="s2">:</span>
+        <span class="s3"># Read audio file</span>
+        <span class="s1">sample_rate</span><span class="s2">, </span><span class="s1">data </span><span class="s2">= </span><span class="s1">wavfile</span><span class="s2">.</span><span class="s1">read</span><span class="s2">(</span><span class="s1">file_path</span><span class="s2">)</span>
+
+        <span class="s3"># Compute FFT of audio data</span>
+        <span class="s1">fft_result </span><span class="s2">= </span><span class="s1">np</span><span class="s2">.</span><span class="s1">fft</span><span class="s2">.</span><span class="s1">fft</span><span class="s2">(</span><span class="s1">data</span><span class="s2">)</span>
+
+        <span class="s3"># Calculate phase</span>
+        <span class="s1">phase </span><span class="s2">= </span><span class="s1">np</span><span class="s2">.</span><span class="s1">angle</span><span class="s2">(</span><span class="s1">fft_result</span><span class="s2">)</span>
+
+        <span class="s3"># time vector</span>
+        <span class="s1">time_vector </span><span class="s2">= </span><span class="s1">np</span><span class="s2">.</span><span class="s1">arange</span><span class="s2">(</span><span class="s1">len</span><span class="s2">(</span><span class="s1">data</span><span class="s2">)) / </span><span class="s1">sample_rate</span>
+
+        <span class="s3"># Plot phase</span>
+        <span class="s1">plt</span><span class="s2">.</span><span class="s1">figure</span><span class="s2">(</span><span class="s1">figsize</span><span class="s2">=(</span><span class="s5">8</span><span class="s2">, </span><span class="s5">6</span><span class="s2">))</span>
+        <span class="s1">plt</span><span class="s2">.</span><span class="s1">plot</span><span class="s2">(</span><span class="s1">time_vector</span><span class="s2">, </span><span class="s1">phase</span><span class="s2">, </span><span class="s1">color</span><span class="s2">=</span><span class="s4">'pink'</span><span class="s2">)</span>
+        <span class="s1">plt</span><span class="s2">.</span><span class="s1">title</span><span class="s2">(</span><span class="s4">'Phase Plot of Audio Signal'</span><span class="s2">)</span>
+        <span class="s1">plt</span><span class="s2">.</span><span class="s1">xlabel</span><span class="s2">(</span><span class="s4">'Time (s)'</span><span class="s2">)</span>
+        <span class="s1">plt</span><span class="s2">.</span><span class="s1">ylabel</span><span class="s2">(</span><span class="s4">'Phase (radians)'</span><span class="s2">)</span>
+        <span class="s1">plt</span><span class="s2">.</span><span class="s1">grid</span><span class="s2">(</span><span class="s0">True</span><span class="s2">)</span>
+        <span class="s1">plt</span><span class="s2">.</span><span class="s1">show</span><span class="s2">()</span>
+    <span class="s0">except </span><span class="s1">Exception </span><span class="s0">as </span><span class="s1">e</span><span class="s2">:</span>
+        <span class="s1">print</span><span class="s2">(</span><span class="s4">f&quot;Error plotting phase: </span><span class="s0">{</span><span class="s1">e</span><span class="s0">}</span><span class="s4">&quot;</span><span class="s2">)</span>
+
+<span class="s0">def </span><span class="s1">compute_frequency_spectrum</span><span class="s2">(</span><span class="s1">data</span><span class="s2">, </span><span class="s1">sample_rate</span><span class="s2">):</span>
+    <span class="s3"># Compute the FFT</span>
+    <span class="s1">fft_result </span><span class="s2">= </span><span class="s1">np</span><span class="s2">.</span><span class="s1">fft</span><span class="s2">.</span><span class="s1">fft</span><span class="s2">(</span><span class="s1">data</span><span class="s2">)</span>
+    <span class="s1">magnitude_spectrum </span><span class="s2">= </span><span class="s1">np</span><span class="s2">.</span><span class="s1">abs</span><span class="s2">(</span><span class="s1">fft_result</span><span class="s2">)</span>
+    <span class="s1">frequencies </span><span class="s2">= </span><span class="s1">np</span><span class="s2">.</span><span class="s1">fft</span><span class="s2">.</span><span class="s1">fftfreq</span><span class="s2">(</span><span class="s1">len</span><span class="s2">(</span><span class="s1">data</span><span class="s2">), </span><span class="s5">1 </span><span class="s2">/ </span><span class="s1">sample_rate</span><span class="s2">)</span>
+
+    <span class="s0">return </span><span class="s1">frequencies</span><span class="s2">[:</span><span class="s1">len</span><span class="s2">(</span><span class="s1">frequencies</span><span class="s2">)//</span><span class="s5">2</span><span class="s2">], </span><span class="s1">magnitude_spectrum</span><span class="s2">[:</span><span class="s1">len</span><span class="s2">(</span><span class="s1">magnitude_spectrum</span><span class="s2">)//</span><span class="s5">2</span><span class="s2">]</span>
+
+<span class="s0">def </span><span class="s1">plot_frequency_spectrum</span><span class="s2">(</span><span class="s1">frequencies</span><span class="s2">, </span><span class="s1">spectrum</span><span class="s2">):</span>
+    <span class="s1">plt</span><span class="s2">.</span><span class="s1">figure</span><span class="s2">()</span>
+    <span class="s1">plt</span><span class="s2">.</span><span class="s1">plot</span><span class="s2">(</span><span class="s1">frequencies</span><span class="s2">, </span><span class="s1">spectrum</span><span class="s2">)</span>
+    <span class="s1">plt</span><span class="s2">.</span><span class="s1">title</span><span class="s2">(</span><span class="s4">'Frequency Spectrum'</span><span class="s2">)</span>
+    <span class="s1">plt</span><span class="s2">.</span><span class="s1">xlabel</span><span class="s2">(</span><span class="s4">'Frequency (Hz)'</span><span class="s2">)</span>
+    <span class="s1">plt</span><span class="s2">.</span><span class="s1">ylabel</span><span class="s2">(</span><span class="s4">'Magnitude'</span><span class="s2">)</span>
+    <span class="s1">plt</span><span class="s2">.</span><span class="s1">grid</span><span class="s2">(</span><span class="s0">True</span><span class="s2">)</span>
+    <span class="s1">plt</span><span class="s2">.</span><span class="s1">show</span><span class="s2">()</span>
+
+
+
+<span class="s0">def </span><span class="s1">displayStats</span><span class="s2">():</span>
+    <span class="s0">if </span><span class="s1">file_path</span><span class="s2">:</span>
+        <span class="s1">audio </span><span class="s2">= </span><span class="s1">AudioSegment</span><span class="s2">.</span><span class="s1">from_file</span><span class="s2">(</span><span class="s1">file_path</span><span class="s2">)</span>
+        <span class="s1">fileDisplay</span><span class="s2">.</span><span class="s1">insert</span><span class="s2">(</span><span class="s1">tk</span><span class="s2">.</span><span class="s1">END</span><span class="s2">, </span><span class="s4">f&quot;Frame Rate: </span><span class="s0">{</span><span class="s1">audio</span><span class="s2">.</span><span class="s1">frame_rate</span><span class="s0">} </span><span class="s4">Hz&quot;</span><span class="s2">)</span>
+        <span class="s1">fileDisplay</span><span class="s2">.</span><span class="s1">insert</span><span class="s2">(</span><span class="s1">tk</span><span class="s2">.</span><span class="s1">END</span><span class="s2">, </span><span class="s4">f&quot;Channels: </span><span class="s0">{</span><span class="s1">audio</span><span class="s2">.</span><span class="s1">channels</span><span class="s0">}</span><span class="s4">&quot;</span><span class="s2">)</span>
+        <span class="s1">fileDisplay</span><span class="s2">.</span><span class="s1">insert</span><span class="s2">(</span><span class="s1">tk</span><span class="s2">.</span><span class="s1">END</span><span class="s2">, </span><span class="s4">f&quot;Sample Width: </span><span class="s0">{</span><span class="s1">audio</span><span class="s2">.</span><span class="s1">sample_width</span><span class="s0">} </span><span class="s4">bytes&quot;</span><span class="s2">)</span>
+        <span class="s1">fileDisplay</span><span class="s2">.</span><span class="s1">insert</span><span class="s2">(</span><span class="s1">tk</span><span class="s2">.</span><span class="s1">END</span><span class="s2">, </span><span class="s4">f&quot;Frame Width: </span><span class="s0">{</span><span class="s1">audio</span><span class="s2">.</span><span class="s1">frame_width</span><span class="s0">} </span><span class="s4">bytes&quot;</span><span class="s2">)</span>
+
+        <span class="s1">plotSpectogram</span><span class="s2">(</span><span class="s1">file_path</span><span class="s2">)</span>
+
+<span class="s0">def </span><span class="s1">showFileDetailsPage</span><span class="s2">():</span>
+    <span class="s3"># Hide the main page and show the file details page</span>
+    <span class="s1">mainPage</span><span class="s2">.</span><span class="s1">pack_forget</span><span class="s2">()</span>
+    <span class="s1">fileDetailsPage</span><span class="s2">.</span><span class="s1">pack</span><span class="s2">()</span>
+
+<span class="s3">#defining fonts for the vibe</span>
+<span class="s1">custom_font1 </span><span class="s2">= (</span><span class="s4">'Helvetica'</span><span class="s2">, </span><span class="s5">15</span><span class="s2">, </span><span class="s4">'bold'</span><span class="s2">)</span>
+<span class="s1">custom_font2 </span><span class="s2">= (</span><span class="s4">'Helvetica'</span><span class="s2">, </span><span class="s5">12</span><span class="s2">)</span>
+<span class="s1">custom_font3 </span><span class="s2">= (</span><span class="s4">'Helvetica'</span><span class="s2">, </span><span class="s5">15</span><span class="s2">)</span>
+<span class="s1">custom_font4 </span><span class="s2">= (</span><span class="s4">'Helvetica'</span><span class="s2">, </span><span class="s5">12</span><span class="s2">, </span><span class="s4">'bold'</span><span class="s2">)</span>
+
+<span class="s0">def </span><span class="s1">createMainPage</span><span class="s2">(</span><span class="s1">root</span><span class="s2">):</span>
+    <span class="s3"># Create the main page</span>
+    <span class="s1">label </span><span class="s2">= </span><span class="s1">tk</span><span class="s2">.</span><span class="s1">Label</span><span class="s2">(</span><span class="s1">root</span><span class="s2">, </span><span class="s1">text</span><span class="s2">=</span><span class="s4">&quot;CS Problem Solving and Solutions Final&quot;</span><span class="s2">, </span><span class="s1">font</span><span class="s2">=</span><span class="s1">custom_font1</span><span class="s2">)</span>
+    <span class="s1">label</span><span class="s2">.</span><span class="s1">pack</span><span class="s2">(</span><span class="s1">pady</span><span class="s2">=</span><span class="s5">20</span><span class="s2">)</span>
+
+    <span class="s1">label2 </span><span class="s2">= </span><span class="s1">tk</span><span class="s2">.</span><span class="s1">Label</span><span class="s2">(</span><span class="s1">root</span><span class="s2">, </span><span class="s1">text</span><span class="s2">=</span><span class="s4">&quot;Section 1&quot;</span><span class="s2">, </span><span class="s1">font</span><span class="s2">=</span><span class="s1">custom_font2</span><span class="s2">)</span>
+    <span class="s1">label2</span><span class="s2">.</span><span class="s1">pack</span><span class="s2">(</span><span class="s1">pady</span><span class="s2">=</span><span class="s5">5</span><span class="s2">)</span>
+
+    <span class="s1">label3 </span><span class="s2">= </span><span class="s1">tk</span><span class="s2">.</span><span class="s1">Label</span><span class="s2">(</span><span class="s1">root</span><span class="s2">, </span><span class="s1">text</span><span class="s2">=</span><span class="s4">&quot;Group 2&quot;</span><span class="s2">, </span><span class="s1">font</span><span class="s2">=</span><span class="s1">custom_font2</span><span class="s2">)</span>
+    <span class="s1">label3</span><span class="s2">.</span><span class="s1">pack</span><span class="s2">(</span><span class="s1">pady</span><span class="s2">=</span><span class="s5">5</span><span class="s2">)</span>
+
+    <span class="s1">label4 </span><span class="s2">= </span><span class="s1">tk</span><span class="s2">.</span><span class="s1">Label</span><span class="s2">(</span><span class="s1">root</span><span class="s2">, </span><span class="s1">text</span><span class="s2">=</span><span class="s4">&quot;Please select a file of the .WAV format&quot;</span><span class="s2">, </span><span class="s1">font</span><span class="s2">= </span><span class="s1">custom_font2</span><span class="s2">)</span>
+    <span class="s1">label4</span><span class="s2">.</span><span class="s1">pack</span><span class="s2">(</span><span class="s1">pady</span><span class="s2">=</span><span class="s5">30</span><span class="s2">)</span>
+    <span class="s3"># Create a button to select a file</span>
+    <span class="s3">#make the button pink :)</span>
+    <span class="s1">button_select_file </span><span class="s2">= </span><span class="s1">tk</span><span class="s2">.</span><span class="s1">Button</span><span class="s2">(</span><span class="s1">root</span><span class="s2">, </span><span class="s1">text</span><span class="s2">=</span><span class="s4">'Select File'</span><span class="s2">, </span><span class="s1">font</span><span class="s2">=</span><span class="s1">custom_font3</span><span class="s2">, </span><span class="s1">bg</span><span class="s2">=</span><span class="s4">&quot;#ff3399&quot;</span><span class="s2">, </span><span class="s1">command</span><span class="s2">=</span><span class="s1">getFile</span><span class="s2">)</span>
+    <span class="s1">button_select_file</span><span class="s2">.</span><span class="s1">pack</span><span class="s2">(</span><span class="s1">pady</span><span class="s2">=</span><span class="s5">10</span><span class="s2">)</span>
+
+
+<span class="s0">def </span><span class="s1">createFileDetailsPage</span><span class="s2">(</span><span class="s1">root</span><span class="s2">):</span>
+    <span class="s3"># Create the file details page</span>
+    <span class="s1">label </span><span class="s2">= </span><span class="s1">tk</span><span class="s2">.</span><span class="s1">Label</span><span class="s2">(</span><span class="s1">root</span><span class="s2">, </span><span class="s1">text</span><span class="s2">=</span><span class="s4">&quot;File Details&quot;</span><span class="s2">, </span><span class="s1">font</span><span class="s2">= </span><span class="s1">custom_font2</span><span class="s2">)</span>
+    <span class="s1">label</span><span class="s2">.</span><span class="s1">pack</span><span class="s2">(</span><span class="s1">pady</span><span class="s2">=</span><span class="s5">10</span><span class="s2">)</span>
+
+    <span class="s3">#listbox to display file details</span>
+    <span class="s0">global </span><span class="s1">fileDisplay</span>
+    <span class="s1">fileDisplay </span><span class="s2">= </span><span class="s1">tk</span><span class="s2">.</span><span class="s1">Listbox</span><span class="s2">(</span><span class="s1">root</span><span class="s2">, </span><span class="s1">height</span><span class="s2">=</span><span class="s5">8</span><span class="s2">, </span><span class="s1">width</span><span class="s2">=</span><span class="s5">90</span><span class="s2">)</span>
+    <span class="s1">fileDisplay</span><span class="s2">.</span><span class="s1">pack</span><span class="s2">(</span><span class="s1">pady</span><span class="s2">=</span><span class="s5">10</span><span class="s2">)</span>
+
+    <span class="s3"># button to go back to the main page</span>
+    <span class="s3">#it's also pink :)</span>
+    <span class="s1">button_back_to_main </span><span class="s2">= </span><span class="s1">tk</span><span class="s2">.</span><span class="s1">Button</span><span class="s2">(</span><span class="s1">root</span><span class="s2">, </span><span class="s1">text</span><span class="s2">=</span><span class="s4">'Back to Main Page'</span><span class="s2">, </span><span class="s1">bg</span><span class="s2">=</span><span class="s4">&quot;#ff3399&quot;</span><span class="s2">, </span><span class="s1">command</span><span class="s2">=</span><span class="s1">showMainPage</span><span class="s2">)</span>
+    <span class="s1">button_back_to_main</span><span class="s2">.</span><span class="s1">pack</span><span class="s2">(</span><span class="s1">pady</span><span class="s2">=</span><span class="s5">20</span><span class="s2">)</span>
+
+
+
+<span class="s0">def </span><span class="s1">showMainPage</span><span class="s2">():</span>
+    <span class="s3"># Hide the file details page and show the main page</span>
+    <span class="s1">fileDetailsPage</span><span class="s2">.</span><span class="s1">pack_forget</span><span class="s2">()</span>
+    <span class="s1">mainPage</span><span class="s2">.</span><span class="s1">pack</span><span class="s2">()</span>
+
+
+<span class="s3"># GUI setup</span>
+<span class="s1">root </span><span class="s2">= </span><span class="s1">tk</span><span class="s2">.</span><span class="s1">Tk</span><span class="s2">()</span>
+<span class="s1">root</span><span class="s2">.</span><span class="s1">geometry</span><span class="s2">(</span><span class="s4">'700x400'</span><span class="s2">)</span>
+<span class="s1">root</span><span class="s2">.</span><span class="s1">title</span><span class="s2">(</span><span class="s4">'Sound Graphing Program'</span><span class="s2">)</span>
+
+<span class="s3"># Create main and file details frames</span>
+<span class="s0">global </span><span class="s1">mainPage</span><span class="s2">, </span><span class="s1">fileDetailsPage</span>
+<span class="s1">mainPage </span><span class="s2">= </span><span class="s1">tk</span><span class="s2">.</span><span class="s1">Frame</span><span class="s2">(</span><span class="s1">root</span><span class="s2">)</span>
+<span class="s1">fileDetailsPage </span><span class="s2">= </span><span class="s1">tk</span><span class="s2">.</span><span class="s1">Frame</span><span class="s2">(</span><span class="s1">root</span><span class="s2">)</span>
+
+<span class="s3"># Create pages</span>
+<span class="s1">createMainPage</span><span class="s2">(</span><span class="s1">mainPage</span><span class="s2">)</span>
+<span class="s1">createFileDetailsPage</span><span class="s2">(</span><span class="s1">fileDetailsPage</span><span class="s2">)</span>
+
+<span class="s3"># Show the main page initially</span>
+<span class="s1">mainPage</span><span class="s2">.</span><span class="s1">pack</span><span class="s2">()</span>
+
+<span class="s3"># Start the main event loop</span>
+<span class="s1">root</span><span class="s2">.</span><span class="s1">mainloop</span><span class="s2">()</span></pre>
+</body>
+</html>

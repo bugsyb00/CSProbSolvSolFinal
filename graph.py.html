@@ -1,0 +1,116 @@
+<html>
+<head>
+<title>graph.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cf8e6d;}
+.s1 { color: #bcbec4;}
+.s2 { color: #bcbec4;}
+.s3 { color: #2aacb8;}
+.s4 { color: #6aab73;}
+.s5 { color: #7a7e85;}
+</style>
+</head>
+<body bgcolor="#1e1f22">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+graph.py</font>
+</center></td></tr></table>
+<pre><span class="s0">import </span><span class="s1">matplotlib</span><span class="s2">.</span><span class="s1">pyplot </span><span class="s0">as </span><span class="s1">plt</span>
+<span class="s0">import </span><span class="s1">numpy </span><span class="s0">as </span><span class="s1">np</span>
+<span class="s0">from </span><span class="s1">scipy</span><span class="s2">.</span><span class="s1">io </span><span class="s0">import </span><span class="s1">wavfile</span>
+
+<span class="s0">def </span><span class="s1">plotWaveform</span><span class="s2">(</span><span class="s1">length</span><span class="s2">, </span><span class="s1">wavArray</span><span class="s2">):</span>
+    <span class="s1">time </span><span class="s2">= </span><span class="s1">np</span><span class="s2">.</span><span class="s1">linspace</span><span class="s2">(</span><span class="s3">0.</span><span class="s2">, </span><span class="s1">length</span><span class="s2">, </span><span class="s1">wavArray</span><span class="s2">.</span><span class="s1">shape</span><span class="s2">[</span><span class="s3">0</span><span class="s2">])</span>
+    <span class="s1">plt</span><span class="s2">.</span><span class="s1">plot</span><span class="s2">(</span><span class="s1">time</span><span class="s2">, </span><span class="s1">wavArray</span><span class="s2">)</span>
+    <span class="s1">plt</span><span class="s2">.</span><span class="s1">title</span><span class="s2">(</span><span class="s4">'Waveform'</span><span class="s2">)</span>
+    <span class="s1">plt</span><span class="s2">.</span><span class="s1">xlabel</span><span class="s2">(</span><span class="s4">&quot;Time [s]&quot;</span><span class="s2">)</span>
+    <span class="s1">plt</span><span class="s2">.</span><span class="s1">ylabel</span><span class="s2">(</span><span class="s4">&quot;Amplitude&quot;</span><span class="s2">)</span>
+    <span class="s1">plt</span><span class="s2">.</span><span class="s1">show</span><span class="s2">()</span>
+
+
+<span class="s0">def </span><span class="s1">plot_frequency_spectrum</span><span class="s2">(</span><span class="s1">frequencies</span><span class="s2">, </span><span class="s1">spectrum</span><span class="s2">):</span>
+    <span class="s1">plt</span><span class="s2">.</span><span class="s1">figure</span><span class="s2">()</span>
+    <span class="s1">plt</span><span class="s2">.</span><span class="s1">plot</span><span class="s2">(</span><span class="s1">frequencies</span><span class="s2">, </span><span class="s1">spectrum</span><span class="s2">)</span>
+    <span class="s1">plt</span><span class="s2">.</span><span class="s1">title</span><span class="s2">(</span><span class="s4">'Frequency Spectrum'</span><span class="s2">)</span>
+    <span class="s1">plt</span><span class="s2">.</span><span class="s1">xlabel</span><span class="s2">(</span><span class="s4">'Frequency (Hz)'</span><span class="s2">)</span>
+    <span class="s1">plt</span><span class="s2">.</span><span class="s1">ylabel</span><span class="s2">(</span><span class="s4">'Magnitude'</span><span class="s2">)</span>
+    <span class="s1">plt</span><span class="s2">.</span><span class="s1">grid</span><span class="s2">(</span><span class="s0">True</span><span class="s2">)</span>
+    <span class="s1">plt</span><span class="s2">.</span><span class="s1">show</span><span class="s2">()</span>
+<span class="s0">def </span><span class="s1">plotSpectogram</span><span class="s2">(</span><span class="s1">filePath</span><span class="s2">):</span>
+    <span class="s1">sample_rate</span><span class="s2">, </span><span class="s1">data </span><span class="s2">= </span><span class="s1">wavfile</span><span class="s2">.</span><span class="s1">read</span><span class="s2">(</span><span class="s1">filePath</span><span class="s2">)</span>
+    <span class="s1">spectrum</span><span class="s2">, </span><span class="s1">freqs</span><span class="s2">, </span><span class="s1">t</span><span class="s2">, </span><span class="s1">im </span><span class="s2">= </span><span class="s1">plt</span><span class="s2">.</span><span class="s1">specgram</span><span class="s2">(</span><span class="s1">data</span><span class="s2">, </span><span class="s1">Fs</span><span class="s2">=</span><span class="s1">sample_rate</span><span class="s2">, </span><span class="s1">NFFT</span><span class="s2">=</span><span class="s3">1024</span><span class="s2">, </span><span class="s1">cmap</span><span class="s2">=</span><span class="s1">plt</span><span class="s2">.</span><span class="s1">get_cmap</span><span class="s2">(</span><span class="s4">'autumn_r'</span><span class="s2">))</span>
+    <span class="s1">plt</span><span class="s2">.</span><span class="s1">title</span><span class="s2">(</span><span class="s4">'Spectrogram'</span><span class="s2">)</span>
+    <span class="s1">plt</span><span class="s2">.</span><span class="s1">xlabel</span><span class="s2">(</span><span class="s4">'Time (s)'</span><span class="s2">)</span>
+    <span class="s1">plt</span><span class="s2">.</span><span class="s1">ylabel</span><span class="s2">(</span><span class="s4">'Frequency (Hz)'</span><span class="s2">)</span>
+    <span class="s1">plt</span><span class="s2">.</span><span class="s1">colorbar</span><span class="s2">(</span><span class="s1">label</span><span class="s2">=</span><span class="s4">'Intensity (dB)'</span><span class="s2">)</span>
+    <span class="s1">plt</span><span class="s2">.</span><span class="s1">show</span><span class="s2">()</span>
+    <span class="s0">return </span><span class="s1">spectrum</span>
+
+
+<span class="s0">def </span><span class="s1">find_target_frequency</span><span class="s2">(</span><span class="s1">freq_band</span><span class="s2">):   </span><span class="s5">#finding value of filtered frequency</span>
+    <span class="s0">for </span><span class="s1">x </span><span class="s0">in </span><span class="s1">freqs</span><span class="s2">:</span>
+        <span class="s0">if </span><span class="s1">x </span><span class="s2">&gt; </span><span class="s1">freq_band</span><span class="s2">:</span>
+            <span class="s0">break</span>
+    <span class="s0">return </span><span class="s1">x</span>
+
+<span class="s0">def </span><span class="s1">frequency_check</span><span class="s2">(</span><span class="s1">freq_band</span><span class="s2">):</span>
+    <span class="s1">target_frequency </span><span class="s2">= </span><span class="s1">find_target_frequency</span><span class="s2">(</span><span class="s1">freq_band</span><span class="s2">)</span>
+    <span class="s1">index_of_frequency </span><span class="s2">= </span><span class="s1">np</span><span class="s2">.</span><span class="s1">where</span><span class="s2">(</span><span class="s1">freqs </span><span class="s2">== </span><span class="s1">target_frequency</span><span class="s2">)[</span><span class="s3">0</span><span class="s2">][</span><span class="s3">0</span><span class="s2">]</span>
+    <span class="s1">data_for_frequency </span><span class="s2">= </span><span class="s1">spectrum</span><span class="s2">[</span><span class="s1">index_of_frequency</span><span class="s2">]</span>
+    <span class="s1">data_in_db_fun </span><span class="s2">= </span><span class="s3">10 </span><span class="s2">* </span><span class="s1">np</span><span class="s2">.</span><span class="s1">log10</span><span class="s2">(</span><span class="s1">data_for_frequency</span><span class="s2">)</span>
+    <span class="s0">return </span><span class="s1">data_in_db_fun</span>
+
+<span class="s0">def </span><span class="s1">find_nearest_value</span><span class="s2">(</span><span class="s1">array</span><span class="s2">, </span><span class="s1">value</span><span class="s2">):</span>
+    <span class="s1">array </span><span class="s2">= </span><span class="s1">np</span><span class="s2">.</span><span class="s1">asarray</span><span class="s2">(</span><span class="s1">array</span><span class="s2">)</span>
+    <span class="s1">idx </span><span class="s2">= (</span><span class="s1">np</span><span class="s2">.</span><span class="s1">abs</span><span class="s2">(</span><span class="s1">array </span><span class="s2">- </span><span class="s1">value</span><span class="s2">)).</span><span class="s1">argmin</span><span class="s2">()</span>
+    <span class="s0">return </span><span class="s1">array</span><span class="s2">[</span><span class="s1">idx</span><span class="s2">]</span>
+
+<span class="s0">def </span><span class="s1">plotrt60</span><span class="s2">(</span><span class="s1">file_path</span><span class="s2">, </span><span class="s1">freq_band</span><span class="s2">, </span><span class="s1">freq_name</span><span class="s2">):</span>
+    <span class="s1">sample_rate</span><span class="s2">, </span><span class="s1">data </span><span class="s2">= </span><span class="s1">wavfile</span><span class="s2">.</span><span class="s1">read</span><span class="s2">(</span><span class="s1">file_path</span><span class="s2">)</span>
+    <span class="s0">global </span><span class="s1">spectrum</span><span class="s2">, </span><span class="s1">freqs</span><span class="s2">, </span><span class="s1">t</span><span class="s2">, </span><span class="s1">im</span>
+    <span class="s1">spectrum</span><span class="s2">, </span><span class="s1">freqs</span><span class="s2">, </span><span class="s1">t</span><span class="s2">, </span><span class="s1">im </span><span class="s2">= </span><span class="s1">plt</span><span class="s2">.</span><span class="s1">specgram</span><span class="s2">(</span><span class="s1">data</span><span class="s2">, </span><span class="s1">Fs</span><span class="s2">=</span><span class="s1">sample_rate</span><span class="s2">, </span><span class="s1">NFFT</span><span class="s2">=</span><span class="s3">1024</span><span class="s2">, </span><span class="s1">cmap</span><span class="s2">=</span><span class="s1">plt</span><span class="s2">.</span><span class="s1">get_cmap</span><span class="s2">(</span><span class="s4">'autumn_r'</span><span class="s2">))</span>
+    <span class="s1">plt</span><span class="s2">.</span><span class="s1">close</span><span class="s2">()</span>
+    <span class="s5">#learned I had to close a plot to prevent runtime error issues.</span>
+    <span class="s5">#I made some of the graphs pink n purple :)</span>
+    <span class="s1">data_in_db </span><span class="s2">= </span><span class="s1">frequency_check</span><span class="s2">(</span><span class="s1">freq_band</span><span class="s2">)</span>
+    <span class="s1">plt</span><span class="s2">.</span><span class="s1">figure</span><span class="s2">()</span>
+    <span class="s1">plt</span><span class="s2">.</span><span class="s1">title</span><span class="s2">(</span><span class="s1">freq_name</span><span class="s2">)</span>
+    <span class="s1">plt</span><span class="s2">.</span><span class="s1">plot</span><span class="s2">(</span><span class="s1">t</span><span class="s2">, </span><span class="s1">data_in_db</span><span class="s2">, </span><span class="s1">linewidth</span><span class="s2">=</span><span class="s3">1</span><span class="s2">, </span><span class="s1">alpha</span><span class="s2">=</span><span class="s3">0.7</span><span class="s2">, </span><span class="s1">color </span><span class="s2">=</span><span class="s4">'#9900cc'</span><span class="s2">)</span>
+    <span class="s1">plt</span><span class="s2">.</span><span class="s1">xlabel</span><span class="s2">(</span><span class="s4">'Time (s)'</span><span class="s2">)</span>
+    <span class="s1">plt</span><span class="s2">.</span><span class="s1">ylabel</span><span class="s2">(</span><span class="s4">'Power (dB)'</span><span class="s2">)</span>
+
+    <span class="s1">index_of_max </span><span class="s2">= </span><span class="s1">np</span><span class="s2">.</span><span class="s1">argmax</span><span class="s2">(</span><span class="s1">data_in_db</span><span class="s2">)</span>
+    <span class="s1">value_of_max </span><span class="s2">= </span><span class="s1">data_in_db</span><span class="s2">[</span><span class="s1">index_of_max</span><span class="s2">]</span>
+    <span class="s1">plt</span><span class="s2">.</span><span class="s1">plot</span><span class="s2">(</span><span class="s1">t</span><span class="s2">[</span><span class="s1">index_of_max</span><span class="s2">], </span><span class="s1">data_in_db</span><span class="s2">[</span><span class="s1">index_of_max</span><span class="s2">], </span><span class="s4">'go'</span><span class="s2">)</span>
+
+    <span class="s1">sliced_array </span><span class="s2">= </span><span class="s1">data_in_db</span><span class="s2">[</span><span class="s1">index_of_max</span><span class="s2">:]</span>
+
+    <span class="s1">value_of_max_less_5 </span><span class="s2">= </span><span class="s1">value_of_max </span><span class="s2">- </span><span class="s3">5</span>
+
+    <span class="s1">value_of_max_less_5 </span><span class="s2">= </span><span class="s1">find_nearest_value</span><span class="s2">(</span><span class="s1">sliced_array</span><span class="s2">, </span><span class="s1">value_of_max_less_5</span><span class="s2">)</span>
+    <span class="s1">index_of_max_less_5 </span><span class="s2">= </span><span class="s1">np</span><span class="s2">.</span><span class="s1">where</span><span class="s2">(</span><span class="s1">data_in_db </span><span class="s2">== </span><span class="s1">value_of_max_less_5</span><span class="s2">)</span>
+    <span class="s1">plt</span><span class="s2">.</span><span class="s1">plot</span><span class="s2">(</span><span class="s1">t</span><span class="s2">[</span><span class="s1">index_of_max_less_5</span><span class="s2">], </span><span class="s1">data_in_db</span><span class="s2">[</span><span class="s1">index_of_max_less_5</span><span class="s2">], </span><span class="s4">'yo'</span><span class="s2">)</span>
+
+    <span class="s1">value_of_max_less_25 </span><span class="s2">= </span><span class="s1">value_of_max </span><span class="s2">- </span><span class="s3">25</span>
+    <span class="s1">value_of_max_less_25 </span><span class="s2">= </span><span class="s1">find_nearest_value</span><span class="s2">(</span><span class="s1">sliced_array</span><span class="s2">, </span><span class="s1">value_of_max_less_25</span><span class="s2">)</span>
+    <span class="s1">index_of_max_less_25 </span><span class="s2">= </span><span class="s1">np</span><span class="s2">.</span><span class="s1">where</span><span class="s2">(</span><span class="s1">data_in_db </span><span class="s2">== </span><span class="s1">value_of_max_less_25</span><span class="s2">)</span>
+
+    <span class="s1">plt</span><span class="s2">.</span><span class="s1">plot</span><span class="s2">(</span><span class="s1">t</span><span class="s2">[</span><span class="s1">index_of_max_less_25</span><span class="s2">], </span><span class="s1">data_in_db</span><span class="s2">[</span><span class="s1">index_of_max_less_25</span><span class="s2">], </span><span class="s4">'ro'</span><span class="s2">)</span>
+    <span class="s1">rt20 </span><span class="s2">= (</span><span class="s1">t</span><span class="s2">[</span><span class="s1">index_of_max_less_5</span><span class="s2">] - </span><span class="s1">t</span><span class="s2">[</span><span class="s1">index_of_max_less_25</span><span class="s2">])[</span><span class="s3">0</span><span class="s2">]</span>
+
+    <span class="s1">rt60 </span><span class="s2">= </span><span class="s1">rt20 </span><span class="s2">* </span><span class="s3">3</span>
+
+    <span class="s1">plt</span><span class="s2">.</span><span class="s1">grid</span><span class="s2">()</span>
+    <span class="s1">plt</span><span class="s2">.</span><span class="s1">show</span><span class="s2">()</span>
+
+    <span class="s0">return </span><span class="s1">rt60</span><span class="s2">, </span><span class="s1">value_of_max_less_25</span><span class="s2">, </span><span class="s1">index_of_max</span>
+
+    <span class="s1">plt</span><span class="s2">.</span><span class="s1">grid</span><span class="s2">()</span>
+    <span class="s1">plt</span><span class="s2">.</span><span class="s1">show</span><span class="s2">()</span>
+
+
+    <span class="s5">#I don't know why some of the functions would not let me call them in the other file without importing them directly</span></pre>
+</body>
+</html>
